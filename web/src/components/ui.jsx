@@ -22,14 +22,14 @@ export function Toggle({ checked, onChange, label, disabled }) {
     <button type="button" role="switch" aria-checked={checked} aria-label={label} disabled={disabled}
       onClick={() => onChange(!checked)}
       className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition ${checked ? 'bg-brand-500' : 'bg-ink-200'} disabled:opacity-50`}>
-      <span className={`inline-block h-5 w-5 rounded-full bg-white shadow transition ${checked ? 'translate-x-[22px]' : 'translate-x-0.5'}`} />
+      <span className={`inline-block h-5 w-5 rounded-full bg-surface shadow transition ${checked ? 'translate-x-[22px]' : 'translate-x-0.5'}`} />
     </button>
   );
 }
 
 export function Badge({ tone = 'gray', children, className = '' }) {
   const tones = {
-    gray: 'bg-ink-100 text-ink-600', green: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200', amber: 'bg-amber-50 text-amber-700 ring-1 ring-amber-200',
+    gray: 'bg-ink-100 text-ink-600', green: 'bg-[#e8efe6] text-[#3d6a4a] ring-1 ring-[#cddbc9]', amber: 'bg-amber-50 text-amber-700 ring-1 ring-amber-200',
     red: 'bg-rose-50 text-rose-700 ring-1 ring-rose-200', brand: 'bg-brand-50 text-brand-700 ring-1 ring-brand-200', blue: 'bg-sky-50 text-sky-700 ring-1 ring-sky-200',
   };
   return <span className={`chip ${tones[tone]} ${className}`}>{children}</span>;
@@ -59,8 +59,8 @@ export function Modal({ open, onClose, title, children, footer, wide }) {
 
 export function Empty({ icon: Icon, title, children, action }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-ink-200 bg-white/60 px-6 py-14 text-center">
-      {Icon && <div className="mb-3 grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-brand-500"><Icon className="h-6 w-6" /></div>}
+    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-ink-300 bg-surface/60 px-6 py-14 text-center">
+      {Icon && <div className="mb-3 grid h-12 w-12 place-items-center rounded-2xl border border-ink-200 bg-surface text-ink-700 shadow-card"><Icon className="h-6 w-6" /></div>}
       <h3 className="text-base font-bold">{title}</h3>
       {children && <p className="mt-1 max-w-sm text-sm text-ink-500">{children}</p>}
       {action && <div className="mt-5">{action}</div>}
@@ -72,9 +72,9 @@ export function PageHeader({ title, description, actions, icon: Icon }) {
   return (
     <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
       <div className="flex items-start gap-3">
-        {Icon && <div className="mt-0.5 grid h-10 w-10 place-items-center rounded-xl bg-brand-50 text-brand-600"><Icon className="h-5 w-5" /></div>}
+        {Icon && <div className="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-ink-900 text-white"><Icon className="h-5 w-5" /></div>}
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight">{title}</h1>
+          <h1 className="text-[26px] font-bold leading-tight tracking-tight">{title}</h1>
           {description && <p className="mt-1 max-w-2xl text-sm text-ink-500">{description}</p>}
         </div>
       </div>
@@ -84,14 +84,14 @@ export function PageHeader({ title, description, actions, icon: Icon }) {
 }
 
 export function Stat({ label, value, sub, icon: Icon, tone = 'brand' }) {
-  const tones = { brand: 'bg-brand-50 text-brand-600', green: 'bg-emerald-50 text-emerald-600', amber: 'bg-amber-50 text-amber-600', blue: 'bg-sky-50 text-sky-600' };
+  const tones = { brand: 'bg-brand-50 text-brand-600', green: 'bg-ink-100 text-ink-700', amber: 'bg-ink-100 text-ink-700', blue: 'bg-ink-100 text-ink-700' };
   return (
     <div className="card p-5">
       <div className="flex items-start justify-between gap-2">
-        <span className="text-xs font-semibold uppercase tracking-wide text-ink-400">{label}</span>
+        <span className="text-[13px] font-medium text-ink-500">{label}</span>
         {Icon && <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg ${tones[tone]}`}><Icon className="h-4 w-4" /></span>}
       </div>
-      <div className="mt-2 font-display text-3xl font-extrabold tracking-tight">{value}</div>
+      <div className="mt-2 font-display text-[32px] font-bold leading-none tracking-tighter">{value}</div>
       {sub && <div className="mt-1 text-xs text-ink-500">{sub}</div>}
     </div>
   );
@@ -99,10 +99,10 @@ export function Stat({ label, value, sub, icon: Icon, tone = 'brand' }) {
 
 export function Tabs({ tabs, value, onChange }) {
   return (
-    <div className="inline-flex rounded-xl bg-ink-100 p-1">
+    <div className="inline-flex rounded-xl border border-ink-200/70 bg-ink-100 p-1">
       {tabs.map((t) => (
         <button key={t.value} onClick={() => onChange(t.value)}
-          className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${value === t.value ? 'bg-white text-ink-900 shadow-sm' : 'text-ink-500 hover:text-ink-800'}`}>
+          className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${value === t.value ? 'bg-surface text-ink-900 shadow-card' : 'text-ink-500 hover:text-ink-800'}`}>
           {t.label}{t.count != null && <span className="ml-1.5 text-ink-400">{t.count}</span>}
         </button>
       ))}
@@ -147,6 +147,6 @@ export function CopyField({ value, label }) {
   );
 }
 
-export function Avatar({ name = '?', color = '#6d5efc', size = 'h-9 w-9', className = '' }) {
-  return <span className={`grid shrink-0 place-items-center rounded-xl font-display text-sm font-bold text-white ${size} ${className}`} style={{ background: `linear-gradient(135deg, ${color}, ${color}cc)` }}>{name.trim().charAt(0).toUpperCase()}</span>;
+export function Avatar({ name = '?', color = '#ee661b', size = 'h-9 w-9', className = '' }) {
+  return <span className={`grid shrink-0 place-items-center rounded-xl font-display text-sm font-bold text-white ${size} ${className}`} style={{ background: color }}>{name.trim().charAt(0).toUpperCase()}</span>;
 }

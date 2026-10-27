@@ -7,7 +7,7 @@ import { PageHeader, Stat, Modal, Empty, PageLoader, Badge, Avatar, useToast, Co
 import { ChannelIcon } from '../components/channels';
 import { BarChart, SERIES, fillDays } from '../components/charts';
 
-const COLORS = ['#6d5efc', '#0ea5a4', '#f97316', '#ec4899', '#0ea5e9', '#84cc16', '#14112b'];
+const COLORS = ['#ee661b', '#181715', '#5f7f6a', '#c99a3c', '#8b6b55', '#4f6d8a', '#a24b3a'];
 
 export function NewAgentModal({ open, onClose, wid }) {
   const { data: templates } = useFetch('/templates');
@@ -92,7 +92,7 @@ export function WorkspaceHome() {
                 <div className="relative z-10">
                   <button className="rounded-lg p-1 text-ink-400 hover:bg-ink-100" onClick={() => setMenu(menu === a.id ? null : a.id)} aria-label="Agent actions"><MoreHorizontal className="h-4 w-4" /></button>
                   {menu === a.id && (
-                    <div className="absolute right-0 top-8 z-20 w-40 rounded-xl border border-ink-200 bg-white p-1 shadow-pop">
+                    <div className="absolute right-0 top-8 z-20 w-40 rounded-xl border border-ink-200 bg-surface p-1 shadow-pop">
                       <button className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-ink-50" onClick={() => act(a, 'dup')}><Copy className="h-4 w-4" />Duplicate</button>
                       <button className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-rose-600 hover:bg-rose-50" onClick={() => act(a, 'del')}><Trash2 className="h-4 w-4" />Delete</button>
                     </div>
@@ -132,7 +132,7 @@ export function Usage() {
         <div className="card p-5">
           <span className="text-xs font-semibold uppercase tracking-wide text-ink-400">Quota used</span>
           <div className="mt-2 font-display text-3xl font-extrabold">{Math.round((total / ws.limits.botMessages) * 100)}%</div>
-          <div className="mt-3 h-2 rounded-full bg-ink-100"><div className="h-2 rounded-full bg-gradient-to-r from-brand-500 to-fuchsia-500" style={{ width: `${Math.min(100, (total / ws.limits.botMessages) * 100)}%` }} /></div>
+          <div className="mt-3 h-2 rounded-full bg-ink-100"><div className="h-2 rounded-full bg-brand-500" style={{ width: `${Math.min(100, (total / ws.limits.botMessages) * 100)}%` }} /></div>
         </div>
       </div>
       <div className="card p-6">

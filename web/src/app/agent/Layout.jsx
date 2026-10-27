@@ -62,7 +62,7 @@ function Studio() {
         ))}
       </Sidebar>
     }>
-      <header className="flex h-14 shrink-0 items-center gap-3 border-b border-ink-200 bg-white px-4">
+      <header className="flex h-14 shrink-0 items-center gap-3 border-b border-ink-200 bg-surface px-4">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <span className="truncate font-display font-bold">{agent.name}</span>
@@ -115,7 +115,7 @@ function PreviewPanel({ onClose }) {
   const last = [...messages].reverse().find((m) => m.role === 'bot');
   const chips = messages.length ? last?.meta?.choices : agent.config.suggestions;
   return (
-    <aside className="flex w-full max-w-sm shrink-0 flex-col border-l border-ink-200 bg-white max-xl:fixed max-xl:inset-y-0 max-xl:right-0 max-xl:z-40 max-xl:shadow-pop">
+    <aside className="flex w-full max-w-sm shrink-0 flex-col border-l border-ink-200 bg-surface max-xl:fixed max-xl:inset-y-0 max-xl:right-0 max-xl:z-40 max-xl:shadow-pop">
       <div className="flex items-center gap-2 border-b border-ink-100 px-4 py-3">
         <Play className="h-4 w-4 text-brand-500" /><span className="flex-1 text-sm font-bold">Preview <span className="font-normal text-ink-400">· working copy</span></span>
         <button className="rounded-lg p-1.5 text-ink-400 hover:bg-ink-100" title="Restart conversation" aria-label="Restart conversation" onClick={reset}><RotateCcw className="h-4 w-4" /></button>
@@ -123,21 +123,21 @@ function PreviewPanel({ onClose }) {
       </div>
       {!llm && <div className="flex gap-2 border-b border-amber-100 bg-amber-50 px-4 py-2 text-[11px] text-amber-800"><Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0" />Answers come from knowledge and playbooks. Set ANTHROPIC_API_KEY on the server for full AI replies.</div>}
       <div className="flex-1 space-y-2.5 overflow-y-auto bg-ink-50/60 p-4 scrollbar-thin">
-        <div className="max-w-[85%] rounded-2xl rounded-bl-md bg-white px-3.5 py-2 text-sm ring-1 ring-ink-200">{agent.config.greeting}</div>
+        <div className="max-w-[85%] rounded-2xl rounded-bl-md bg-surface px-3.5 py-2 text-sm ring-1 ring-ink-200">{agent.config.greeting}</div>
         {messages.map((m) => m.role === 'system' ? <p key={m.id} className="text-center text-[11px] text-ink-400">{m.text}</p> : (
           <div key={m.id} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
-            <div className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3.5 py-2 text-sm ${m.role === 'user' ? 'rounded-br-md bg-brand-500 text-white' : 'rounded-bl-md bg-white ring-1 ring-ink-200'}`}>{m.text}</div>
+            <div className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3.5 py-2 text-sm ${m.role === 'user' ? 'rounded-br-md bg-brand-500 text-white' : 'rounded-bl-md bg-surface ring-1 ring-ink-200'}`}>{m.text}</div>
             {m.role === 'bot' && (
               <button className="mt-0.5 text-[10px] text-ink-400 hover:text-brand-600" onClick={() => setDebug(debug === m.id ? null : m.id)}>
                 {m.meta?.trace?.[0] ? `${m.meta.trace[0].type}${m.meta.trace[0].name ? `: ${m.meta.trace[0].name}` : m.meta.trace[0].title ? `: ${m.meta.trace[0].title}` : ''}` : 'details'} · {m.meta?.latencyMs} ms
               </button>
             )}
-            {debug === m.id && <pre className="mt-1 max-h-40 w-full overflow-auto rounded-lg bg-ink-950 p-2 text-[10px] text-brand-100">{JSON.stringify({ trace: m.meta?.trace, sources: m.meta?.sources }, null, 2)}</pre>}
+            {debug === m.id && <pre className="mt-1 max-h-40 w-full overflow-auto rounded-lg bg-ink-900 p-2 font-mono text-[10px] text-ink-100">{JSON.stringify({ trace: m.meta?.trace, sources: m.meta?.sources }, null, 2)}</pre>}
           </div>
         ))}
-        {busy && <div className="flex w-14 gap-1 rounded-2xl bg-white px-3 py-3 ring-1 ring-ink-200">{[0, 1, 2].map((i) => <span key={i} className="h-1.5 w-1.5 animate-bounce rounded-full bg-ink-300" style={{ animationDelay: `${i * 120}ms` }} />)}</div>}
+        {busy && <div className="flex w-14 gap-1 rounded-2xl bg-surface px-3 py-3 ring-1 ring-ink-200">{[0, 1, 2].map((i) => <span key={i} className="h-1.5 w-1.5 animate-bounce rounded-full bg-ink-300" style={{ animationDelay: `${i * 120}ms` }} />)}</div>}
         {status === 'human' && <p className="rounded-lg bg-amber-50 p-2 text-center text-[11px] text-amber-800">Handed off. In production this chat now waits in the inbox.</p>}
-        {chips?.length > 0 && !busy && <div className="flex flex-wrap gap-1.5">{chips.map((c) => <button key={c} onClick={() => send(c)} className="rounded-full border border-brand-300 bg-white px-3 py-1 text-xs font-medium text-brand-700 hover:bg-brand-50">{c}</button>)}</div>}
+        {chips?.length > 0 && !busy && <div className="flex flex-wrap gap-1.5">{chips.map((c) => <button key={c} onClick={() => send(c)} className="rounded-full border border-brand-300 bg-surface px-3 py-1 text-xs font-medium text-brand-700 hover:bg-brand-50">{c}</button>)}</div>}
         <div ref={end} />
       </div>
       <form onSubmit={(e) => { e.preventDefault(); send(); }} className="flex gap-2 border-t border-ink-100 p-3">

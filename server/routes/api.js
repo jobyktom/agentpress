@@ -186,7 +186,7 @@ export function createAgent(workspaceId, { name, description = '', template = 'b
   const t = now();
   tx(() => {
     run('INSERT INTO agents (id, workspace_id, name, description, color, working, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      aid, workspaceId, name, description || tpl.description, color || '#6d5efc', JSON.stringify(cfg), t, t);
+      aid, workspaceId, name, description || tpl.description, color || '#ee661b', JSON.stringify(cfg), t, t);
     run('INSERT INTO channels (id, agent_id, type, enabled, config, webhook_secret, created_at) VALUES (?, ?, ?, 1, ?, ?, ?)', id('chn'), aid, 'webchat', '{}', token(18), t);
   });
   return aid;

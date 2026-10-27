@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS members (
 );
 CREATE TABLE IF NOT EXISTS agents (
   id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-  name TEXT NOT NULL, description TEXT NOT NULL DEFAULT '', color TEXT NOT NULL DEFAULT '#6d5efc',
+  name TEXT NOT NULL, description TEXT NOT NULL DEFAULT '', color TEXT NOT NULL DEFAULT '#ee661b',
   working TEXT NOT NULL, published TEXT, published_version INTEGER NOT NULL DEFAULT 0,
   published_at TEXT, created_at TEXT NOT NULL, updated_at TEXT NOT NULL
 );
@@ -73,6 +73,13 @@ CREATE TABLE IF NOT EXISTS api_keys (
   id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
   name TEXT NOT NULL, prefix TEXT NOT NULL, key_hash TEXT NOT NULL, created_at TEXT NOT NULL
 );
+`);
+
+// Move agents still on the original purple defaults to the current theme.
+db.exec(`
+UPDATE agents SET color = '#ee661b' WHERE color = '#6d5efc';
+UPDATE agents SET working = replace(working, '"primaryColor":"#6d5efc"', '"primaryColor":"#9a7b4f","headerColor":"#1e2a24"') WHERE working LIKE '%"primaryColor":"#6d5efc"%';
+UPDATE agents SET published = replace(published, '"primaryColor":"#6d5efc"', '"primaryColor":"#9a7b4f","headerColor":"#1e2a24"') WHERE published LIKE '%"primaryColor":"#6d5efc"%';
 `);
 
 export const now = () => new Date().toISOString();

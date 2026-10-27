@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Radio, MessageSquareCode, Search, ExternalLink, AlertTriangle, CheckCircle2, Clock, Loader2, Unplug, Code2 } from 'lucide-react';
+import { Radio, MessageSquareCode, Search, ExternalLink, AlertTriangle, CheckCircle2, Clock, Loader2, Unplug, Code2, MessageCircle, X, ArrowRight } from 'lucide-react';
 import { useAgent } from './context';
 import { PageHeader, Badge, Modal, Toggle, CopyField, PageLoader, useToast, Tabs } from '../../components/ui';
 import { ChannelIcon, CHANNEL_META, CHANNEL_GUIDES } from '../../components/channels';
@@ -114,10 +114,26 @@ function ChannelModal({ channel, aid, wid, onClose, onSaved, onRemoved }) {
   );
 }
 
+const THEMES = [
+  { name: 'Forest & bronze', head: '#1e2a24', accent: '#9a7b4f' },
+  { name: 'Graphite & orange', head: '#181715', accent: '#ee661b' },
+  { name: 'Navy & sky', head: '#16233a', accent: '#3f7fc4' },
+  { name: 'Plum & rose', head: '#2c1b2b', accent: '#b5566f' },
+];
+
+function ColorField({ label, value, onChange, disabled }) {
+  return (
+    <label className="block"><span className="label">{label}</span>
+      <div className="flex gap-2"><input type="color" disabled={disabled} className="h-10 w-12 shrink-0 cursor-pointer rounded-lg border border-ink-200 bg-surface" value={value} onChange={(e) => onChange(e.target.value)} /><input className="input font-mono" disabled={disabled} value={value} onChange={(e) => onChange(e.target.value)} /></div>
+    </label>
+  );
+}
+
 export function Webchat() {
   const { agent, config, updateConfig, canEdit } = useAgent();
   const w = config.webchat;
   const set = (k, v) => updateConfig((c) => { c.webchat[k] = v; return c; });
+  const head = w.headerColor || '#1e2a24';
   const snippet = `<script src="${location.origin}/widget.js" data-agent="${agent.id}" async></script>`;
   const hosted = `${location.origin}/chat/${agent.id}`;
   return (
@@ -130,7 +146,19 @@ export function Webchat() {
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block"><span className="label">Title</span><input className="input" disabled={!canEdit} value={w.title} onChange={(e) => set('title', e.target.value)} /></label>
               <label className="block"><span className="label">Subtitle</span><input className="input" disabled={!canEdit} value={w.subtitle} onChange={(e) => set('subtitle', e.target.value)} /></label>
-              <label className="block"><span className="label">Brand color</span><div className="flex gap-2"><input type="color" disabled={!canEdit} className="h-10 w-12 rounded-lg border border-ink-200" value={w.primaryColor} onChange={(e) => set('primaryColor', e.target.value)} /><input className="input font-mono" disabled={!canEdit} value={w.primaryColor} onChange={(e) => set('primaryColor', e.target.value)} /></div></label>
+              <div className="sm:col-span-2">
+                <span className="label">Theme</span>
+                <div className="flex flex-wrap gap-2">
+                  {THEMES.map((t) => (
+                    <button key={t.name} type="button" disabled={!canEdit} onClick={() => updateConfig((c) => { c.webchat.headerColor = t.head; c.webchat.primaryColor = t.accent; return c; })}
+                      className={`flex items-center gap-2 rounded-xl border px-2.5 py-1.5 text-xs font-medium transition ${head === t.head && w.primaryColor === t.accent ? 'border-ink-900 bg-surface' : 'border-ink-200 hover:border-ink-300'}`}>
+                      <span className="flex"><span className="h-4 w-4 rounded-full ring-2 ring-surface" style={{ background: t.head }} /><span className="-ml-1.5 h-4 w-4 rounded-full ring-2 ring-surface" style={{ background: t.accent }} /></span>{t.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <ColorField label="Header color" value={head} disabled={!canEdit} onChange={(v) => set('headerColor', v)} />
+              <ColorField label="Accent color" value={w.primaryColor} disabled={!canEdit} onChange={(v) => set('primaryColor', v)} />
               <label className="block"><span className="label">Position</span><select className="input" disabled={!canEdit} value={w.position} onChange={(e) => set('position', e.target.value)}><option value="right">Bottom right</option><option value="left">Bottom left</option></select></label>
               <label className="block sm:col-span-2"><span className="label">Launcher label (optional)</span><input className="input" disabled={!canEdit} value={w.launcherText} onChange={(e) => set('launcherText', e.target.value)} placeholder="Chat with us" /></label>
             </div>
@@ -144,23 +172,25 @@ export function Webchat() {
             <p className="text-xs text-ink-400">Changes to appearance go live when you publish.</p>
           </div>
         </div>
-        <div className="card relative min-h-[560px] overflow-hidden bg-[radial-gradient(#e2e1ee_1px,transparent_1px)] [background-size:18px_18px]">
-          <div className="absolute left-4 top-4 text-xs font-semibold text-ink-400">Live preview</div>
-          <div className={`absolute bottom-20 ${w.position === 'left' ? 'left-4' : 'right-4'} flex w-[320px] max-w-[calc(100%-2rem)] flex-col overflow-hidden rounded-2xl bg-white shadow-pop`}>
-            <div className="flex items-center gap-3 p-4 text-white" style={{ background: `linear-gradient(135deg, ${w.primaryColor}, #1b1640)` }}>
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-white/20 font-bold">{w.title.charAt(0)}</span>
-              <div><div className="text-sm font-bold">{w.title}</div><div className="flex items-center gap-1 text-[11px] opacity-85"><span className="h-1.5 w-1.5 rounded-full bg-green-400" />{w.subtitle}</div></div>
+        <div className="card relative min-h-[600px] overflow-hidden bg-ink-100/70">
+          <div className="eyebrow absolute left-5 top-4">Live preview</div>
+          <div className={`absolute bottom-24 ${w.position === 'left' ? 'left-5' : 'right-5'} flex w-[330px] max-w-[calc(100%-2.5rem)] flex-col overflow-hidden rounded-[18px] border border-black/5 bg-[#fbfaf6] shadow-pop`}>
+            <div className="flex items-center gap-3 px-4 py-3.5 text-[#f6f3ec]" style={{ background: head }}>
+              <span className="grid h-10 w-10 place-items-center rounded-full bg-[#efe9dc]" style={{ color: head }}><MessageCircle className="h-5 w-5" /></span>
+              <div><div className="text-[15px] font-bold">{w.title}</div><div className="flex items-center gap-1.5 text-[12px] opacity-80"><span className="h-1.5 w-1.5 rounded-full bg-[#7bc38f]" />{w.subtitle}</div></div>
+              <X className="ml-auto h-4 w-4 opacity-70" />
             </div>
-            <div className="space-y-2 bg-ink-50 p-3 text-[13px]">
-              <div className="w-fit max-w-[85%] rounded-2xl rounded-bl-md bg-white px-3 py-2 ring-1 ring-ink-200">{config.greeting}</div>
-              <div className="flex flex-wrap gap-1">{config.suggestions.map((s) => <span key={s} className="rounded-full border bg-white px-2.5 py-1 text-xs" style={{ borderColor: w.primaryColor, color: w.primaryColor }}>{s}</span>)}</div>
-              <div className="ml-auto w-fit rounded-2xl rounded-br-md px-3 py-2 text-white" style={{ background: w.primaryColor }}>Hi there!</div>
+            <div className="space-y-2.5 px-4 py-4 text-[13.5px] leading-snug">
+              <div className="w-fit max-w-[86%] rounded-xl bg-[#e8ede6] px-3.5 py-2.5 text-[#25302a]">{config.greeting}</div>
+              <div className="ml-auto w-fit max-w-[86%] rounded-xl px-3.5 py-2.5 text-[#fbf8f2]" style={{ background: w.primaryColor }}>{config.suggestions[0] || 'Hi there!'}</div>
+              <div className="flex w-fit gap-1 rounded-xl bg-[#e8ede6] px-3.5 py-3">{[0, 1, 2].map((i) => <span key={i} className="h-1.5 w-1.5 rounded-full bg-[#7e8a82]" />)}</div>
+              <div className="flex flex-wrap justify-end gap-1.5 pt-1">{config.suggestions.slice(1).map((s) => <span key={s} className="rounded-full border px-2.5 py-1 text-xs font-medium" style={{ borderColor: w.primaryColor, color: w.primaryColor }}>{s}</span>)}</div>
             </div>
-            <div className="border-t border-ink-100 p-2"><div className="rounded-lg border border-ink-200 px-3 py-2 text-xs text-ink-400">Type a message…</div></div>
-            {w.showPoweredBy && <div className="pb-2 text-center text-[10px] text-ink-400">Powered by AgentPress</div>}
+            <div className="px-3 pb-3"><div className="flex items-center rounded-[14px] border border-[#e1ddd3] bg-surface py-1.5 pl-3.5 pr-1.5 text-[13px] text-[#9a9f98]">Type your question…<span className="ml-auto grid h-8 w-8 place-items-center rounded-full text-white" style={{ background: w.primaryColor }}><ArrowRight className="h-4 w-4" /></span></div></div>
+            {w.showPoweredBy && <div className="pb-2.5 text-center text-[10px] text-[#9a9f98]">Powered by <b>AgentPress</b></div>}
           </div>
-          <div className={`absolute bottom-4 ${w.position === 'left' ? 'left-4' : 'right-4'} flex h-12 items-center gap-2 rounded-full px-4 text-sm font-semibold text-white shadow-pop`} style={{ background: w.primaryColor }}>
-            <MessageSquareCode className="h-5 w-5" />{w.launcherText}
+          <div className={`absolute bottom-5 ${w.position === 'left' ? 'left-5' : 'right-5'} flex h-14 min-w-14 items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold text-[#f6f3ec] shadow-pop`} style={{ background: head }}>
+            <MessageCircle className="h-6 w-6" />{w.launcherText}
           </div>
         </div>
       </div>

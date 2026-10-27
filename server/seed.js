@@ -9,9 +9,9 @@ export function seedDemo() {
   if (one('SELECT 1 FROM users LIMIT 1')) return false;
   const uid = createUser({ email: 'demo@agentpress.dev', name: 'Demo User', password: 'demo1234' });
   const wid = createWorkspace(uid, 'Acme Inc.');
-  const support = createAgent(wid, { name: 'Acme Support', template: 'support', color: '#6d5efc' });
-  const sales = createAgent(wid, { name: 'Sales Concierge', template: 'leads', color: '#0ea5a4' });
-  createAgent(wid, { name: 'Clinic Booking', template: 'booking', color: '#f97316' });
+  const support = createAgent(wid, { name: 'Acme Support', template: 'support', color: '#ee661b' });
+  const sales = createAgent(wid, { name: 'Sales Concierge', template: 'leads', color: '#5f7f6a' });
+  createAgent(wid, { name: 'Clinic Booking', template: 'booking', color: '#c99a3c' });
 
   const a = one('SELECT * FROM agents WHERE id = ?', support);
   const cfg = parse(a.working);

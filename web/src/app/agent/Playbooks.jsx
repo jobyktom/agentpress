@@ -7,14 +7,14 @@ import { PageHeader, Empty, Toggle, Badge } from '../../components/ui';
 import { uid } from '../../lib/api';
 
 export const STEP_TYPES = {
-  message: { label: 'Message', icon: MessageSquare, color: '#10b981', hint: 'Send a message' },
-  ask: { label: 'Ask', icon: HelpCircle, color: '#0ea5e9', hint: 'Ask and save the answer' },
-  condition: { label: 'Condition', icon: GitBranch, color: '#d946ef', hint: 'Branch on a variable' },
-  tool: { label: 'Call tool', icon: Wrench, color: '#f59e0b', hint: 'Run an HTTP tool' },
-  set: { label: 'Set variable', icon: Variable, color: '#64748b', hint: 'Store a value' },
-  ai: { label: 'AI reply', icon: Sparkles, color: '#6d5efc', hint: 'Let AI answer with guidance' },
-  handoff: { label: 'Handoff', icon: UserRound, color: '#f43f5e', hint: 'Move to the human inbox' },
-  end: { label: 'End', icon: Flag, color: '#14112b', hint: 'Finish the playbook' },
+  message: { label: 'Message', icon: MessageSquare, color: '#5f7f6a', hint: 'Send a message' },
+  ask: { label: 'Ask', icon: HelpCircle, color: '#4f6d8a', hint: 'Ask and save the answer' },
+  condition: { label: 'Condition', icon: GitBranch, color: '#8b6b55', hint: 'Branch on a variable' },
+  tool: { label: 'Call tool', icon: Wrench, color: '#c99a3c', hint: 'Run an HTTP tool' },
+  set: { label: 'Set variable', icon: Variable, color: '#76716a', hint: 'Store a value' },
+  ai: { label: 'AI reply', icon: Sparkles, color: '#ee661b', hint: 'Let AI answer with guidance' },
+  handoff: { label: 'Handoff', icon: UserRound, color: '#a24b3a', hint: 'Move to the human inbox' },
+  end: { label: 'End', icon: Flag, color: '#181715', hint: 'Finish the playbook' },
 };
 
 function summary(s, tools) {
@@ -32,7 +32,7 @@ function StepNode({ data }) {
   const T = STEP_TYPES[data.step.type];
   const Icon = T.icon;
   return (
-    <div className={`w-60 rounded-xl border bg-white shadow-sm transition ${data.selected ? 'border-brand-400 ring-4 ring-brand-100' : 'border-ink-200'}`}>
+    <div className={`w-60 rounded-xl border bg-surface shadow-sm transition ${data.selected ? 'border-brand-400 ring-4 ring-brand-100' : 'border-ink-200'}`}>
       <Handle type="target" position={Position.Top} className="!h-2 !w-2 !border-0 !bg-ink-300" />
       <div className="flex items-center gap-2 border-b border-ink-100 px-3 py-1.5">
         <span className="grid h-5 w-5 place-items-center rounded-md text-white" style={{ background: T.color }}><Icon className="h-3 w-3" /></span>
@@ -46,10 +46,10 @@ function StepNode({ data }) {
 }
 function TriggerNode({ data }) {
   return (
-    <div className="w-60 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 px-3 py-2.5 text-white shadow-md">
+    <div className="w-60 rounded-xl bg-ink-900 px-3 py-2.5 text-white shadow-md">
       <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide opacity-80"><Zap className="h-3 w-3" />Trigger</div>
       <div className="mt-0.5 line-clamp-2 text-xs">{data.triggers.length ? data.triggers.map((t) => `“${t}”`).join(', ') : 'Add trigger phrases'}</div>
-      <Handle type="source" position={Position.Bottom} className="!h-2 !w-2 !border-0 !bg-white" />
+      <Handle type="source" position={Position.Bottom} className="!h-2 !w-2 !border-0 !bg-surface" />
     </div>
   );
 }
@@ -88,10 +88,10 @@ function buildGraph(pb, selected, tools) {
     nodes.push({ id: s.id, type: 'step', position: { x: col * 290, y: depth[s.id] * 120 }, data: { step: s, index: i, selected: selected === s.id, summary: summary(s, tools) }, draggable: false });
     for (const [t, label] of targetsOf(s, i)) {
       edges.push({ id: `${s.id}-${t}-${label}`, source: s.id, target: t, label: label || undefined, type: 'smoothstep', animated: label === 'yes',
-        style: { stroke: label === 'no' ? '#f43f5e' : label === 'yes' ? '#10b981' : '#b4a6ff', strokeWidth: 2 }, labelStyle: { fontSize: 10, fontWeight: 700 }, labelBgStyle: { fill: '#fff' } });
+        style: { stroke: label === 'no' ? '#a24b3a' : label === 'yes' ? '#5f7f6a' : '#cfc8bc', strokeWidth: 2 }, labelStyle: { fontSize: 10, fontWeight: 700 }, labelBgStyle: { fill: '#fbfaf7' } });
     }
   });
-  if (steps.length) edges.unshift({ id: 'trigger-edge', source: '__trigger', target: steps[0].id, type: 'smoothstep', style: { stroke: '#6d5efc', strokeWidth: 2 } });
+  if (steps.length) edges.unshift({ id: 'trigger-edge', source: '__trigger', target: steps[0].id, type: 'smoothstep', style: { stroke: '#ee661b', strokeWidth: 2 } });
   return { nodes, edges };
 }
 
@@ -119,7 +119,7 @@ export default function Playbooks() {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="border-b border-ink-200 bg-white px-6 py-4">
+      <div className="border-b border-ink-200 bg-surface px-6 py-4">
         <PageHeader icon={Workflow} title="Playbooks" description="Step-by-step flows for the moments that must go exactly right. Everything else is handled by AI using your instructions and knowledge."
           actions={canEdit && <button className="btn btn-primary btn-sm" onClick={create}><Plus className="h-3.5 w-3.5" />New playbook</button>} />
         {config.playbooks.length > 0 && (
@@ -136,7 +136,7 @@ export default function Playbooks() {
         <div className="flex min-h-0 flex-1 max-xl:flex-col">
           <div className="flex min-h-[420px] min-w-0 flex-1 flex-col">
             {canEdit && (
-              <div className="flex flex-wrap items-center gap-1 border-b border-ink-200 bg-white px-3 py-2">
+              <div className="flex flex-wrap items-center gap-1 border-b border-ink-200 bg-surface px-3 py-2">
                 <span className="mr-1 text-[11px] font-semibold uppercase tracking-wide text-ink-400">Add step</span>
                 {Object.entries(STEP_TYPES).map(([k, T]) => (
                   <button key={k} onClick={() => addStep(k)} title={`${T.hint}${selected ? ' after the selected step' : ''}`} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-semibold text-ink-600 hover:bg-ink-50">
@@ -148,12 +148,12 @@ export default function Playbooks() {
           <div className="relative flex-1 bg-ink-50">
             <ReactFlow nodes={graph.nodes} edges={graph.edges} nodeTypes={nodeTypes} fitView fitViewOptions={{ padding: 0.25 }} minZoom={0.3} nodesConnectable={false}
               onNodeClick={(_, n) => setSelected(n.id === '__trigger' ? null : n.id)} onPaneClick={() => setSelected(null)} proOptions={{ hideAttribution: true }}>
-              <Background gap={18} color="#d4d3e3" />
+              <Background gap={18} color="#cfc8bc" />
               <Controls showInteractive={false} />
             </ReactFlow>
           </div>
           </div>
-          <div className="w-full shrink-0 overflow-y-auto border-l border-ink-200 bg-white p-5 scrollbar-thin xl:w-80">
+          <div className="w-full shrink-0 overflow-y-auto border-l border-ink-200 bg-surface p-5 scrollbar-thin xl:w-80">
             {step ? (
               <StepInspector step={step} steps={pb.steps} tools={config.tools} set={setStep} canEdit={canEdit} onMove={move} onDelete={delStep} />
             ) : (

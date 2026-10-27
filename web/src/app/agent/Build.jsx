@@ -43,12 +43,12 @@ export function Overview() {
       <div className="grid gap-6 lg:grid-cols-5">
         <div className="card p-6 lg:col-span-3">
           <div className="flex items-center justify-between"><h3 className="font-bold">Launch checklist</h3><span className="text-xs font-semibold text-ink-500">{done}/{checklist.length}</span></div>
-          <div className="mt-3 h-1.5 rounded-full bg-ink-100"><div className="h-1.5 rounded-full bg-gradient-to-r from-brand-500 to-mint-500 transition-all" style={{ width: `${(done / checklist.length) * 100}%` }} /></div>
+          <div className="mt-3 h-1.5 rounded-full bg-ink-100"><div className="h-1.5 rounded-full bg-brand-500 transition-all" style={{ width: `${(done / checklist.length) * 100}%` }} /></div>
           <ul className="mt-5 space-y-2">
             {checklist.map(([label, ok, to]) => (
               <li key={label}>
                 <Link to={to ? `/app/w/${wid}/agents/${aid}/${to}` : '#'} className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-ink-50">
-                  {ok ? <CheckCircle2 className="h-5 w-5 text-emerald-500" /> : <span className="h-5 w-5 rounded-full border-2 border-ink-200" />}
+                  {ok ? <CheckCircle2 className="h-5 w-5 text-brand-500" /> : <span className="h-5 w-5 rounded-full border-2 border-ink-300" />}
                   <span className={`flex-1 text-sm ${ok ? 'text-ink-400 line-through' : 'font-medium'}`}>{label}</span>
                   {!ok && to && <ArrowRight className="h-4 w-4 text-ink-300" />}
                 </Link>

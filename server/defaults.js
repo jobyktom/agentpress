@@ -25,8 +25,9 @@ export function defaultConfig(name = 'New agent', description = '') {
     },
     webchat: {
       title: name,
-      subtitle: 'Typically replies instantly',
-      primaryColor: '#6d5efc',
+      subtitle: 'Website assistant',
+      primaryColor: '#9a7b4f',
+      headerColor: '#1e2a24',
       position: 'right',
       showPoweredBy: true,
       launcherText: '',

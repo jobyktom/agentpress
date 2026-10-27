@@ -54,7 +54,16 @@ On first start the server creates a demo account (**demo@agentpress.dev / demo12
 
 For development, run `npm run dev:server` and `npm run dev:web` in two terminals, then open http://localhost:5173. Vite proxies `/api` to the server.
 
-Run the tests with `npm test`.
+Run the tests with `npm test`. It covers the whole API end to end: accounts, roles, agents, knowledge, tools, preview, publishing, the web chat widget, the REST API, and an inbound and outbound round trip on all 13 channels, with provider APIs faked so it runs offline.
+
+For a browser run of every screen, start a server on a fresh database and run `npm run test:browser` (needs Playwright with Chromium):
+
+```bash
+npm run build && PORT=3999 AGENTPRESS_DB=/tmp/e2e.db npm start &
+BASE=http://localhost:3999 npm run test:browser
+```
+
+Website import and HTTP tools refuse private and loopback addresses. Set `ALLOW_PRIVATE_FETCH=1` if an agent needs to call an intranet API.
 
 ### Configuration
 

@@ -30,7 +30,7 @@ export function Thread({ cid, onBack, onChange }) {
   };
   const status = async (s) => { await api(`/conversations/${cid}/status`, { method: 'POST', body: { status: s } }); onChange?.(); };
   return (
-    <div className="flex min-w-0 flex-1 flex-col bg-white">
+    <div className="flex min-w-0 flex-1 flex-col bg-surface">
       <div className="flex flex-wrap items-center gap-3 border-b border-ink-100 px-5 py-3">
         {onBack && <button className="rounded-lg p-1 hover:bg-ink-100 md:hidden" onClick={onBack} aria-label="Back"><ArrowLeft className="h-5 w-5" /></button>}
         <ChannelIcon type={c.channel} className="h-9 w-9" iconClass="h-4 w-4" />
@@ -47,11 +47,11 @@ export function Thread({ cid, onBack, onChange }) {
       </div>
       <div className="flex-1 space-y-3 overflow-y-auto bg-ink-50/60 p-5 scrollbar-thin">
         {data.messages.map((m) => m.role === 'system' ? (
-          <div key={m.id} className="text-center text-xs text-ink-400"><span className="rounded-full bg-white px-3 py-1 ring-1 ring-ink-200">{m.text} · {timeAgo(m.created_at)}</span></div>
+          <div key={m.id} className="text-center text-xs text-ink-400"><span className="rounded-full bg-surface px-3 py-1 ring-1 ring-ink-200">{m.text} · {timeAgo(m.created_at)}</span></div>
         ) : (
           <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-start' : 'justify-end'}`}>
             <div className="max-w-[75%]">
-              <div className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${m.role === 'user' ? 'rounded-bl-md bg-white ring-1 ring-ink-200' : m.role === 'agent' ? 'rounded-br-md bg-amber-100 text-amber-950' : 'rounded-br-md bg-brand-500 text-white'}`}>
+              <div className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${m.role === 'user' ? 'rounded-bl-md bg-surface ring-1 ring-ink-200' : m.role === 'agent' ? 'rounded-br-md bg-amber-100 text-amber-950' : 'rounded-br-md bg-brand-500 text-white'}`}>
                 <p className="whitespace-pre-wrap">{m.text}</p>
                 {m.meta?.choices?.length > 0 && <div className="mt-2 flex flex-wrap gap-1">{m.meta.choices.map((ch) => <span key={ch} className="rounded-full bg-white/20 px-2 py-0.5 text-xs ring-1 ring-white/40">{ch}</span>)}</div>}
               </div>
@@ -111,7 +111,7 @@ export function WorkspaceInbox() {
   useStream(`/workspaces/${wid}/stream`, { conversation: () => reload(), inbox: () => reload(), message: () => reload() });
   return (
     <div className="flex h-full">
-      <div className={`flex w-full flex-col border-r border-ink-200 bg-white md:w-96 ${selected ? 'hidden md:flex' : ''}`}>
+      <div className={`flex w-full flex-col border-r border-ink-200 bg-surface md:w-96 ${selected ? 'hidden md:flex' : ''}`}>
         <div className="border-b border-ink-100 p-4">
           <h1 className="flex items-center gap-2 text-xl font-extrabold"><Headphones className="h-5 w-5 text-brand-500" />Inbox</h1>
           <p className="mt-1 text-xs text-ink-500">Live conversations from every agent and channel.</p>
@@ -135,7 +135,7 @@ export function AgentConversations() {
   useStream(`/agents/${aid}/stream`, { conversation: () => reload(), message: () => reload() });
   return (
     <div className="flex h-full">
-      <div className={`flex w-full flex-col border-r border-ink-200 bg-white md:w-96 ${selected ? 'hidden md:flex' : ''}`}>
+      <div className={`flex w-full flex-col border-r border-ink-200 bg-surface md:w-96 ${selected ? 'hidden md:flex' : ''}`}>
         <div className="space-y-2 border-b border-ink-100 p-4">
           <h1 className="text-xl font-extrabold">Conversations</h1>
           <div className="relative"><Search className="absolute left-3 top-2.5 h-4 w-4 text-ink-400" /><input className="input pl-9" placeholder="Search names and messages" value={f.q} onChange={(e) => setF({ ...f, q: e.target.value })} /></div>

@@ -35,7 +35,7 @@ function WorkspaceSwitcher({ wid }) {
   return (
     <div className="relative">
       <button onClick={() => setOpen(!open)} className="flex w-full items-center gap-2.5 rounded-xl bg-white/5 p-2 text-left hover:bg-white/10">
-        <Avatar name={current?.name || '?'} color="#9480ff" size="h-8 w-8" />
+        <Avatar name={current?.name || '?'} color="#3e3b36" size="h-8 w-8" />
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-semibold text-white">{current?.name || 'Workspace'}</div>
           <div className="text-[11px] capitalize text-ink-400">{current?.plan} plan · {current?.role}</div>
@@ -43,10 +43,10 @@ function WorkspaceSwitcher({ wid }) {
         <ChevronsUpDown className="h-4 w-4 text-ink-400" />
       </button>
       {open && (
-        <div className="absolute left-0 right-0 top-full z-30 mt-1 rounded-xl border border-white/10 bg-ink-900 p-1 shadow-pop">
+        <div className="absolute left-0 right-0 top-full z-30 mt-1 rounded-xl border border-surface/10 bg-ink-900 p-1 shadow-pop">
           {list?.map((w) => (
             <button key={w.id} onClick={() => { setOpen(false); nav(`/app/w/${w.id}`); }} className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm text-ink-200 hover:bg-white/5">
-              <Avatar name={w.name} color="#9480ff" size="h-6 w-6" className="text-[10px]" /><span className="flex-1 truncate text-left">{w.name}</span>{w.id === wid && <Check className="h-4 w-4 text-brand-300" />}
+              <Avatar name={w.name} color="#3e3b36" size="h-6 w-6" className="text-[10px]" /><span className="flex-1 truncate text-left">{w.name}</span>{w.id === wid && <Check className="h-4 w-4 text-brand-300" />}
             </button>
           ))}
           <button onClick={() => { setOpen(false); setCreating(true); }} className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm text-brand-300 hover:bg-white/5"><Plus className="h-4 w-4" /> New workspace</button>
@@ -70,8 +70,8 @@ export function Sidebar({ children, top }) {
       <Link to="/" className="mb-5 px-2"><Logo dark /></Link>
       {top}
       <nav className="mt-4 flex-1 space-y-0.5 overflow-y-auto scrollbar-thin">{children}</nav>
-      <div className="mt-4 flex items-center gap-2.5 border-t border-white/10 px-1 pt-4">
-        <Avatar name={user?.name} color="#14b8a6" size="h-8 w-8" />
+      <div className="mt-4 flex items-center gap-2.5 border-t border-surface/10 px-1 pt-4">
+        <Avatar name={user?.name} color="#5f7f6a" size="h-8 w-8" />
         <div className="min-w-0 flex-1"><div className="truncate text-sm font-medium text-white">{user?.name}</div><div className="truncate text-[11px] text-ink-400">{user?.email}</div></div>
         <button title="Log out" aria-label="Log out" onClick={async () => { await signOut(); nav('/'); }} className="rounded-lg p-1.5 text-ink-400 hover:bg-white/10 hover:text-white"><LogOut className="h-4 w-4" /></button>
       </div>
@@ -86,7 +86,7 @@ export function Frame({ sidebar, children }) {
       <aside className="hidden w-64 shrink-0 lg:block">{sidebar}</aside>
       {open && <div className="fixed inset-0 z-40 bg-ink-950/50 lg:hidden" onClick={() => setOpen(false)}><aside className="h-full w-72" onClick={(e) => e.stopPropagation()}>{sidebar}</aside></div>}
       <div className="flex min-w-0 flex-1 flex-col">
-        <div className="flex h-12 items-center border-b border-ink-200 bg-white px-3 lg:hidden">
+        <div className="flex h-12 items-center border-b border-ink-200 bg-surface px-3 lg:hidden">
           <button className="btn-ghost rounded-lg p-1.5" onClick={() => setOpen(true)} aria-label="Open menu"><Menu className="h-5 w-5" /></button>
           <span className="ml-2 font-display font-bold">AgentPress</span>
         </div>

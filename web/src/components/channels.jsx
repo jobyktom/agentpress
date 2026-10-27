@@ -2,7 +2,7 @@ import { Globe, MessageCircle, Send, Phone, ThumbsUp, Camera, Hash, Users, Gamep
 
 // Neutral, original channel tiles (brand colours + generic glyphs).
 export const CHANNEL_META = {
-  webchat:   { name: 'Web chat', color: '#6d5efc', icon: Globe, blurb: 'Embed a chat bubble on any website or share a hosted chat page.', category: 'Website' },
+  webchat:   { name: 'Web chat', color: '#ee661b', icon: Globe, blurb: 'Embed a chat bubble on any website or share a hosted chat page.', category: 'Website' },
   whatsapp:  { name: 'WhatsApp', color: '#25d366', icon: Phone, blurb: 'Reply on WhatsApp Business through the Cloud API.', category: 'Messaging' },
   telegram:  { name: 'Telegram', color: '#229ed9', icon: Send, blurb: 'Connect a Telegram bot with its BotFather token.', category: 'Messaging' },
   viber:     { name: 'Viber', color: '#7360f2', icon: MessageCircle, blurb: 'Answer Viber chats through a Viber bot account.', category: 'Messaging' },
@@ -14,7 +14,7 @@ export const CHANNEL_META = {
   line:      { name: 'LINE', color: '#06c755', icon: MessageSquare, blurb: 'Serve customers on LINE Official Accounts.', category: 'Messaging' },
   twilio:    { name: 'Twilio SMS', color: '#f22f46', icon: Smartphone, blurb: 'Two-way SMS on any Twilio phone number.', category: 'SMS & email' },
   email:     { name: 'Email', color: '#0f766e', icon: Mail, blurb: 'Answer inbound email via Resend, Postmark or SendGrid parse.', category: 'SMS & email' },
-  api:       { name: 'REST API', color: '#14112b', icon: Code2, blurb: 'Talk to your agent from your own app or backend.', category: 'Developers' },
+  api:       { name: 'REST API', color: '#181715', icon: Code2, blurb: 'Talk to your agent from your own app or backend.', category: 'Developers' },
 };
 
 export function ChannelIcon({ type, className = 'h-10 w-10', iconClass = 'h-5 w-5' }) {

@@ -10,7 +10,8 @@
     "build": "npm --prefix web install --include=dev && npm --prefix web run build",
     "start": "node server/index.js",
     "seed": "node server/seed.js",
-    "test": "node --no-warnings --test server/test/*.test.js"
+    "test": "node --no-warnings --test server/test/*.test.js",
+    "test:browser": "node e2e/browser.cjs"
   },
   "engines": {
     "node": ">=22.5"

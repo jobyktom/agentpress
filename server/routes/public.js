@@ -26,6 +26,13 @@ const webchatEnabled = (aid) => one("SELECT enabled FROM channels WHERE agent_id
 
 /* ---------- web chat widget ---------- */
 
+// Agent shown in the marketing site's live demo bubble.
+pub.get('/demo-agent', (_req, res) => {
+  const a = (process.env.DEMO_AGENT_ID && liveAgent(process.env.DEMO_AGENT_ID))
+    || one('SELECT a.id FROM agents a JOIN channels c ON c.agent_id = a.id AND c.type = \'webchat\' AND c.enabled = 1 WHERE a.published IS NOT NULL ORDER BY a.created_at LIMIT 1');
+  res.json({ agentId: a?.id || null });
+});
+
 pub.get('/chat/:aid/config', (req, res) => {
   const a = liveAgent(req.params.aid);
   if (!a || !webchatEnabled(a.id)) return res.status(404).json({ error: 'This assistant is not available.' });

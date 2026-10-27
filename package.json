@@ -7,10 +7,10 @@
   "scripts": {
     "dev:server": "node --watch server/index.js",
     "dev:web": "npm --prefix web run dev",
-    "build": "npm --prefix web run build",
+    "build": "npm --prefix web install --include=dev && npm --prefix web run build",
     "start": "node server/index.js",
     "seed": "node server/seed.js",
-    "test": "node --test server/test/"
+    "test": "node --no-warnings --test server/test/*.test.js"
   },
   "engines": {
     "node": ">=22.5"

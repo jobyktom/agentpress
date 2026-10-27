@@ -49,6 +49,22 @@ export function seedDemo() {
       if (q.includes('crypto')) run("INSERT INTO logs (id, agent_id, level, type, message, data, created_at) VALUES (?, ?, 'warn', 'gap', ?, ?, ?)", id('log'), support, `Unanswered question: "${q}"`, JSON.stringify({ question: q, conversationId: cid }), t);
     }
   }
+  // A couple of live escalations so the inbox has something waiting.
+  const waiting = [
+    ['whatsapp', 'Priya Nair', ['My package arrived damaged', 'This is the second time, really frustrated. I want to speak to a human']],
+    ['viber', 'Daniel Costa', ['Can I change the delivery address on order A-2210?', 'talk to a human please']],
+  ];
+  for (const [channel, name, lines] of waiting) {
+    const t0 = Date.now() - 25 * 60e3;
+    const cid = id('conv');
+    run("INSERT INTO conversations (id, agent_id, channel, external_id, user_name, status, source, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'human', 'live', ?, ?)", cid, support, channel, `seed-wait-${channel}`, name, new Date(t0).toISOString(), new Date(t0 + 4 * 60e3).toISOString());
+    lines.forEach((text, i) => {
+      run('INSERT INTO messages (id, conversation_id, role, text, meta, created_at) VALUES (?, ?, ?, ?, ?, ?)', id('msg'), cid, 'user', text, '{}', new Date(t0 + i * 120e3).toISOString());
+      const reply = i === lines.length - 1 ? "I'm connecting you with a member of our team. They'll reply here shortly." : "I'm sorry to hear that. Could you share your order number so I can look into it?";
+      run('INSERT INTO messages (id, conversation_id, role, text, meta, created_at) VALUES (?, ?, ?, ?, ?, ?)', id('msg'), cid, 'bot', reply, JSON.stringify({ latencyMs: 640 }), new Date(t0 + i * 120e3 + 1500).toISOString());
+    });
+    run("INSERT INTO messages (id, conversation_id, role, text, meta, created_at) VALUES (?, ?, 'system', 'Handed off to a human: User asked for a human', '{}', ?)", id('msg'), cid, new Date(t0 + 4 * 60e3).toISOString());
+  }
   return true;
 }
 

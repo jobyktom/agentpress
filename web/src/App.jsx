@@ -1,122 +1,59 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { Routes, Route, useParams, Link } from 'react-router-dom';
+import MarketingLayout from './marketing/Layout';
+import Home from './marketing/Home';
+import { Product, Channels as ChannelsPage, Pricing, Docs, AuthPage, HostedChat } from './marketing/Pages';
+import { AppIndex, RequireAuth, WorkspaceShell } from './app/Shell';
+import { WorkspaceHome, Usage, Members, WorkspaceSettings } from './app/Workspace';
+import { WorkspaceInbox, AgentConversations } from './app/Inbox';
+import AgentLayout from './app/agent/Layout';
+import { Overview, Instructions, Knowledge, Tools, Escalation } from './app/agent/Build';
+import Playbooks from './app/agent/Playbooks';
+import { Channels, Webchat } from './app/agent/Deploy';
+import { Analytics, Simulations, Logs, Versions } from './app/agent/Monitor';
 
-function App() {
-  const [count, setCount] = useState(0)
+function Hosted() { const { aid } = useParams(); return <HostedChat agentId={aid} />; }
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+function NotFound() {
+  return <div className="flex min-h-screen flex-col items-center justify-center gap-4"><h1 className="text-4xl font-extrabold">Page not found</h1><Link to="/" className="btn btn-primary">Go home</Link></div>;
 }
 
-export default App
+export default function App() {
+  return (
+    <Routes>
+      <Route element={<MarketingLayout />}>
+        <Route index element={<Home />} />
+        <Route path="product" element={<Product />} />
+        <Route path="channels" element={<ChannelsPage />} />
+        <Route path="pricing" element={<Pricing />} />
+        <Route path="docs" element={<Docs />} />
+      </Route>
+      <Route path="login" element={<AuthPage mode="login" />} />
+      <Route path="signup" element={<AuthPage mode="signup" />} />
+      <Route path="chat/:aid" element={<Hosted />} />
+      <Route path="app" element={<RequireAuth><AppIndex /></RequireAuth>} />
+      <Route path="app/w/:wid" element={<RequireAuth><WorkspaceShell /></RequireAuth>}>
+        <Route index element={<WorkspaceHome />} />
+        <Route path="inbox" element={<WorkspaceInbox />} />
+        <Route path="usage" element={<Usage />} />
+        <Route path="members" element={<Members />} />
+        <Route path="settings" element={<WorkspaceSettings />} />
+      </Route>
+      <Route path="app/w/:wid/agents/:aid" element={<RequireAuth><AgentLayout /></RequireAuth>}>
+        <Route index element={<Overview />} />
+        <Route path="instructions" element={<Instructions />} />
+        <Route path="playbooks" element={<Playbooks />} />
+        <Route path="knowledge" element={<Knowledge />} />
+        <Route path="tools" element={<Tools />} />
+        <Route path="escalation" element={<Escalation />} />
+        <Route path="channels" element={<Channels />} />
+        <Route path="webchat" element={<Webchat />} />
+        <Route path="conversations" element={<AgentConversations />} />
+        <Route path="analytics" element={<Analytics />} />
+        <Route path="simulations" element={<Simulations />} />
+        <Route path="logs" element={<Logs />} />
+        <Route path="versions" element={<Versions />} />
+      </Route>
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+}

@@ -303,7 +303,7 @@ api.put('/agents/:aid/channels/:type', requireUser, requireRole('editor'), wrap(
   let info = null; let error = null;
   if (enabled && !missingFields(type, cfg, CHANNEL_TYPES[type].fields).length && adapters[type]?.setup) {
     try { info = (await adapters[type].setup({ ...cfg, _secret: row.webhook_secret }, `${baseUrl(req)}/api/hooks/${row.id}`))?.info; }
-    catch (e) { error = e.message; }
+    catch (e) { error = `Couldn't register with ${CHANNEL_TYPES[type].name}: ${e.message}`; }
   }
   run('UPDATE channels SET config = ?, enabled = ?, last_error = ? WHERE id = ?', JSON.stringify(cfg), enabled ? 1 : 0, error, row.id);
   log(req.agent.id, error ? 'error' : 'info', 'channel', error ? `${CHANNEL_TYPES[type].name} setup failed: ${error}` : `${CHANNEL_TYPES[type].name} ${enabled ? 'enabled' : 'disabled'}${info ? ` (${info})` : ''}`);

@@ -1,4 +1,4 @@
-import { createHmac, timingSafeEqual } from 'node:crypto';
+import { createHmac, createPublicKey, timingSafeEqual, verify } from 'node:crypto';
 
 // Each adapter turns provider webhooks into { externalId, userName, text }
 // events and knows how to send a reply back. `setup` registers our webhook
@@ -172,18 +172,40 @@ export const adapters = {
   discord: {
     // Discord bots receive messages over the Gateway websocket; we support
     // the HTTP interactions endpoint for the /ask slash command.
+    authorize(req, cfg) {
+      try {
+        const key = createPublicKey({ key: Buffer.concat([Buffer.from('302a300506032b6570032100', 'hex'), Buffer.from(cfg.publicKey, 'hex')]), format: 'der', type: 'spki' });
+        const ts = req.headers['x-signature-timestamp'] || '';
+        return verify(null, Buffer.from(ts + (req.rawBody || '')), key, Buffer.from(req.headers['x-signature-ed25519'] || '', 'hex'));
+      } catch { return false; }
+    },
+    // PING must be answered with PONG; commands get a deferred reply that
+    // the follow-up message then fills in.
+    ack(req, res) {
+      res.json({ type: req.body?.type === 1 ? 1 : 5 });
+    },
     parse(req) {
       const i = req.body || {};
       if (i.type !== 2) return [];
       const text = i.data?.options?.find((o) => o.name === 'message')?.value;
-      return text ? [{ externalId: i.channel_id, userName: i.member?.user?.username || 'Discord user', text, reply: { interactionToken: i.token } }] : [];
+      return text ? [{ externalId: i.channel_id, userName: i.member?.user?.username || i.user?.username || 'Discord user', text, reply: { interactionToken: i.token, at: Date.now() } }] : [];
     },
-    send(cfg, to, text, choices) {
-      return json(`https://discord.com/api/v10/channels/${to}/messages`, { content: withChoices(text, choices).slice(0, 2000) }, { Authorization: `Bot ${cfg.botToken}` });
+    send(cfg, to, text, choices, ctx = {}) {
+      const content = withChoices(text, choices).slice(0, 2000);
+      // Interaction tokens last 15 minutes; after that post to the channel.
+      if (ctx.interactionToken && Date.now() - ctx.at < 14 * 60000) {
+        return json(`https://discord.com/api/v10/webhooks/${cfg.applicationId}/${ctx.interactionToken}`, { content });
+      }
+      return json(`https://discord.com/api/v10/channels/${to}/messages`, { content }, { Authorization: `Bot ${cfg.botToken}` });
     },
   },
 
   twilio: {
+    authorize(req, cfg) {
+      const params = req.body || {};
+      const data = cfg._url + Object.keys(params).sort().map((k) => k + params[k]).join('');
+      return safeEq(req.headers['x-twilio-signature'], createHmac('sha1', cfg.authToken).update(data).digest('base64'));
+    },
     parse(req) {
       const b = req.body || {};
       return b.Body ? [{ externalId: b.From, userName: b.From, text: b.Body }] : [];

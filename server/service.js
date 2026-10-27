@@ -49,7 +49,8 @@ export async function deliver(conv, text, choices) {
   const ch = one('SELECT * FROM channels WHERE agent_id = ? AND type = ?', conv.agent_id, conv.channel);
   if (!ch) return;
   try {
-    await adapter.send(parse(ch.config), conv.external_id, text, choices, parse(conv.meta).reply || {});
+    const meta = parse(one('SELECT meta FROM conversations WHERE id = ?', conv.id)?.meta);
+    await adapter.send(parse(ch.config), conv.external_id, text, choices, meta.reply || {});
   } catch (e) {
     run('UPDATE channels SET last_error = ? WHERE id = ?', e.message, ch.id);
     log(conv.agent_id, 'error', 'channel', `Failed to deliver on ${conv.channel}: ${e.message}`, { conversationId: conv.id });
@@ -87,10 +88,10 @@ export async function handleIncoming({ agent, channel, externalId, userName, tex
 
   const out = [userMsg];
   for (const r of result.replies) {
-    out.push(addMessage(conv, 'bot', r.text, { choices: r.choices, sources: r.sources, trace: result.trace, latencyMs: Date.now() - started, usage: result.usage }));
+    out.push(addMessage(conv, 'bot', r.text, { choices: r.choices, sources: r.sources, trace: result.trace, latencyMs: Date.now() - started, usage: result.usage, gap: result.gap || undefined }));
     await deliver(conv, r.text, r.choices);
   }
-  if (result.gap) log(agent.id, 'warn', 'gap', `Unanswered question: "${text.slice(0, 140)}"`, { conversationId: conv.id, question: text });
+  if (result.gap && source === 'live') log(agent.id, 'warn', 'gap', `Unanswered question: "${text.slice(0, 140)}"`, { conversationId: conv.id, question: text });
   let finalConv = convOut(one('SELECT * FROM conversations WHERE id = ?', conv.id));
   if (result.handoff) {
     finalConv = setStatus(conv, 'human');

@@ -2,6 +2,7 @@
 // service is required: chunks are scored with BM25 so the platform works
 // offline, and the top chunks are handed to the model (or answered directly
 // when no model key is configured).
+import { safeFetch } from './netguard.js';
 
 const STOP = new Set('a an and are as at be but by can do does for from has have how i in is it its me my of on or our so that the their this to was we what when where which who why will with you your'.split(' '));
 
@@ -71,7 +72,7 @@ function stripHtml(html) {
 }
 
 export async function fetchWebsite(url) {
-  const res = await fetch(url, { headers: { 'user-agent': 'AgentPressBot/1.0 (+knowledge indexer)' }, signal: AbortSignal.timeout(15000) });
+  const res = await safeFetch(url, { headers: { 'user-agent': 'AgentPressBot/1.0 (+knowledge indexer)' }, signal: AbortSignal.timeout(15000) });
   if (!res.ok) throw new Error(`Fetch failed with HTTP ${res.status}`);
   const html = await res.text();
   const title = (html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1] || url).trim();

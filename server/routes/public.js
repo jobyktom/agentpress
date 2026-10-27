@@ -4,6 +4,7 @@ import { one, all, run, now, parse } from '../db.js';
 import { adapters } from '../channels/index.js';
 import { handleIncoming, convOut, msgOut, log } from '../service.js';
 import { sse } from '../bus.js';
+import { baseUrl } from './api.js';
 
 export const pub = Router();
 const wrap = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
@@ -102,7 +103,7 @@ pub.get('/hooks/:chid', (req, res) => {
 pub.post('/hooks/:chid', wrap(async (req, res) => {
   const ch = loadChannel(req, res); if (!ch) return;
   const adapter = adapters[ch.type];
-  const cfg = { ...parse(ch.config), _secret: ch.webhook_secret };
+  const cfg = { ...parse(ch.config), _secret: ch.webhook_secret, _url: `${baseUrl(req)}/api/hooks/${ch.id}` };
   const challenge = adapter?.challenge?.(req);
   if (challenge) return res.json(challenge);
   if (adapter?.authorize && !adapter.authorize(req, cfg)) {
@@ -110,7 +111,7 @@ pub.post('/hooks/:chid', wrap(async (req, res) => {
     return res.status(401).end();
   }
   // Acknowledge fast; providers retry slow webhooks.
-  if (adapter?.respondEmpty) adapter.respondEmpty(res); else res.status(200).json({ ok: true });
+  if (adapter?.ack) adapter.ack(req, res); else if (adapter?.respondEmpty) adapter.respondEmpty(res); else res.status(200).json({ ok: true });
   if (!ch.enabled) return;
   run('UPDATE channels SET last_event_at = ? WHERE id = ?', now(), ch.id);
   const agent = liveAgent(ch.agent_id);

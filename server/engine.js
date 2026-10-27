@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
+import { safeFetch } from './netguard.js';
 import { search, tokenize } from './knowledge.js';
 
 const hasKey = () => Boolean(process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN);
@@ -58,7 +59,7 @@ export async function runHttpTool(tool, args = {}) {
   for (const h of tool.headers || []) if (h.key) headers[h.key] = interpolate(h.value, vars);
   const init = { method: tool.method || 'GET', headers, signal: AbortSignal.timeout(15000) };
   if (init.method !== 'GET' && init.method !== 'HEAD') init.body = tool.body ? interpolate(tool.body, vars) : JSON.stringify(args);
-  const res = await fetch(url, init);
+  const res = await safeFetch(url, init);
   const raw = await res.text();
   let data; try { data = JSON.parse(raw); } catch { data = raw.slice(0, 4000); }
   return { ok: res.ok, status: res.status, data };
